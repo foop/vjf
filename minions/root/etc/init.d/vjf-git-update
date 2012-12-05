@@ -18,7 +18,7 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Description of the service"
+DESC="Updates vjf services (found in /usr/local/vjf/) from git source"
 NAME=vjf-git-updated
 DAEMON=/usr/local/vjf/$NAME
 DAEMON_ARGS="--options args"
