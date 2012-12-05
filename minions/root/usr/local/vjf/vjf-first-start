@@ -1,0 +1,15 @@
+#! /usr/bin/env perl
+use warnings;
+use strict;
+use Sys::Hostname;
+
+if ( hostname =~ /ubuntu/g ) {
+    $script_name = $0;
+    $script_directory_name = $script_name . ".d";
+    @scripts = <$script_directory_name/*>;
+    foreach $script (@scripts) {
+        if ( -x $script ) {
+            `$script`; 
+        }
+    }
+}
