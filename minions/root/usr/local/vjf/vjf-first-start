@@ -2,14 +2,17 @@
 use warnings;
 use strict;
 use Sys::Hostname;
+use Cwd 'abs_path';
 
-if ( hostname =~ /ubuntu/g ) {
-    $script_name = $0;
-    $script_directory_name = $script_name . ".d";
-    @scripts = <$script_directory_name/*>;
-    foreach $script (@scripts) {
+if ( hostname =~ /^ubuntu$/g ) {
+    my $script_name = $0;
+    my $scripts_directory = abs_path($script_name) . ".d";
+    my @scripts = <$scripts_directory/*>;
+    print $scripts_directory . "\n";
+    foreach my $script (@scripts) {
+    print "$script\n";
         if ( -x $script ) {
-            `$script`; 
+            print `$script`; 
         }
     }
 }
