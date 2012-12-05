@@ -18,8 +18,9 @@
 
 # PATH should only include /usr/* if it runs after the mountnfs.sh script
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="Description of the service"
-NAME=vjf-git-updated
+DESC="Just checks if hostname is still set to default. It it is it runs 
+      the scripts found in /usr/local/vjf/firststart/"
+NAME=vjf-is-first-start
 DAEMON=/usr/local/vjf/$NAME
 DAEMON_ARGS="--options args"
 PIDFILE=/var/run/$NAME.pid
