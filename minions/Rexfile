@@ -1,0 +1,69 @@
+use strict;
+use warnings;
+use Data::Dumper;
+use Rex::Commands::Iptables;
+use Rex::Commands::Network;
+use Rex::Commands::File;
+use List::Pairwise qw(mapp);
+use Rex::Logger
+
+user "dominik";
+
+group gf => "buero1.gf.vjf.at";
+
+desc "Get the uptime";
+task "uptime", group => "gf", sub {
+    say run "uptime";
+};
+
+
+desc "misc - set hostname";
+task "set-host-name",group => "gf", sub {
+    my $args = shift;
+    my @checked_args = keys %$args;
+    die "we need an hostname as an argument" unless @checked_args == 1;
+    my $hostname = $checked_args[0];
+    say run "echo $hostname > /etc/hostname";
+    sed qr{^127.0.1.1\s+[^\s]+$}, $hostname, "/etc/hosts";
+    Rex::Logger::info("Hostname set to $hostname");
+};
+
+desc "misc - get hostname";
+task "get-host-name",group => "gf", sub {
+    say run "hostname";
+};
+
+
+desc "reboot";
+task "reboot", group => "gf", sub {
+    say run "shutdown -r now";
+    Rex::Logger::info "Rebooting as requested, this may take a while ...";
+};
+
+desc "shutdown";
+task "shutdown", group => "gf", sub {
+    say run "shutdown -h now";
+    Rex::Logger::info "Shutting the system down, good bye and good luck ... ";
+};
+
+desc "firewall - list all rules";
+task "firewall-list-all",group => "gf", sub {
+    # on openwrt routers there is no /sbin/iptables-save
+    run "[ ! -f /sbin/iptables-save ] && [ -f /usr/sbin/iptables-save ] && 
+           ln -s /usr/sbin/iptables-save /sbin/iptables-save";
+    # print Dumper iptables_list;
+    # iptables t => "nat", A => "POSTROUTING", o => "eth0", j => "MASQUERADE";
+    # todo work o not ?
+    my $firewall = iptables_list();
+    foreach my $table ( keys %{$firewall} ) {
+            say"\n#################### $table ##############################\n";
+        foreach my $rule_bla ($firewall->{$table}) {                                                                                                             
+            foreach my $rule (@$rule_bla) {
+                print "iptables 't' => '$table'";
+                my %value = (@$rule);
+                mapp {print ",\n\t '$a' => '$b'"} @$rule;
+                say "\n;";
+            }
+        }
+    }
+};
