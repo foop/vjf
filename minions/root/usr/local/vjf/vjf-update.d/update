@@ -8,6 +8,7 @@ git_old_dir="/usr/src/vjfold";
 if [[ -x /usr/bin/git ]]; then
         # this feels bad :(
         if [[ -d $git_src_dir ]]; then
+            rm -r $git_old_dir;
             mv $git_src_dir $git_old_dir;
         fi
         mkdir -p $git_src_dir;
