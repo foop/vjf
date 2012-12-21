@@ -1,0 +1,3 @@
+#!/bin/sh
+
+touch /usr/local/vjf/test.txt
