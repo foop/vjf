@@ -1,0 +1,12 @@
+#!/usr/bin/perl
+
+# Author: Dominik Danter
+# Purpose: Executes every file in vjf-startup.d
+
+use strict;
+use warnings;
+
+use lib '/usr/local/vjf/lib';
+
+use execute_d qw(&execute_d); 
+&execute_d();
