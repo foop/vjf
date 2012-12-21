@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+# Author: Dominik Danter
+# Purpose: Executes every file in vjf-startup.d if hostname is ubuntu
+
+use strict;
+use warnings;
+use Sys::Hostname;
+use Cwd qw(realpath);
+use File::Spec;
+
+use lib '/usr/local/vjf/lib';
+use execute_d qw(&execute_d); 
+
+&execute_d() if (hostname =~ /^ubuntu$/g);
