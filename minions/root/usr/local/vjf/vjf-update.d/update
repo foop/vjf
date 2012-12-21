@@ -1,24 +1,24 @@
 #!/usr/bin/zsh
 
-$git_src_dir = /usr/src/vjf;
-$vjf_dir = /usr/local/vjf;
-$vjf_src_dir = $git_src_dir/minions/root$vjf_dir
+git_src_dir="/usr/src/vjf"
+vjf_dir="/usr/local/vjf"
+vjf_src_dir="$git_src_dir/minions/root$vjf_dir"
 
 if [[ -x /usr/bin/git ]]; then
-    if [[ ! -d $git_src_dir ]];  then
+        # this feels bad :(
+        rm -r $git_src_dir;
         mkdir -p $git_src_dir;
-    fi;
     if [[ -x $git_src_dir ]]; then
-        git clone https://github.com/foop/vjf.git
-        if [[  $? ne 0 ]]; then; exit; fi;
+        git clone https://github.com/foop/vjf.git $git_src_dir 
+        if [[  $? -ne 0 ]]; then; exit; fi;
         if [[ ! -d $vjf_dir ]]; then 
             mkdir $vjf_dir;
         fi;
         [[ -x $vjf_dir ]] && 
         # we want no subfolder so we need the trailing /
-        rsync --archive --delete $vjf_src_dir $vjf_dir/
+        rsync --archive --delete --verbose $vjf_src_dir $vjf_dir/
           
     else
-        exit;
+        exit 1;
     fi;
 fi;
