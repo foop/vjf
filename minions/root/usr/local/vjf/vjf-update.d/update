@@ -3,10 +3,13 @@
 git_src_dir="/usr/src/vjf"
 vjf_dir="/usr/local/vjf"
 vjf_src_dir="$git_src_dir/minions/root$vjf_dir"
+git_old_dir="/usr/src/vjfold";
 
 if [[ -x /usr/bin/git ]]; then
         # this feels bad :(
-        rm -r $git_src_dir;
+        if [[ -d $git_src_dir ]]; then
+            mv $git_src_dir $git_old_dir;
+        fi
         mkdir -p $git_src_dir;
     if [[ -x $git_src_dir ]]; then
         git clone https://github.com/foop/vjf.git $git_src_dir 
