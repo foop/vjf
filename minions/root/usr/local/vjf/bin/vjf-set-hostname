@@ -1,0 +1,17 @@
+#!/usr/bin/perl -i
+
+use warnings;
+use strict;
+
+my $hostname = shift (@ARGV) or die "Usage: $0 hostname";
+
+# a valid hostname must not be longer than 255 digits
+length($hostname) <= 255 or die "The choosen hostname is too long";
+
+# valid hostname, must be alpha-numeric, consits of labels concatenated 
+# by dots (.), a label must be between 1 and 63 characters long
+my $valid_hostname =  '[a-z][a-z0-9]{0,62}(?:\.[a-z][a-z0-9]{0,62})*';
+$hostname =~ /^$valid_hostname$/i or die "The chosen hostname is incorrect (note: we also do *not* allow leading digits)";
+
+print `perl -pi.bak -e "s/^.*\$/$hostname/;" /etc/hostname `;
+print `perl -pi.bak -e 's/^(127\.0\.1\.1\\s+)$valid_hostname\$/\$1$hostname/;' /etc/hosts`;
