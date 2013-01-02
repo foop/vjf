@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+use warnings;
+use strict;
+
+my $uid = 1050;
+my $end_uid = 1100;
+my $exit_status_uid_already_exists = 1024;
+my $exit_status_not_root = 256;
+my $exit_status;
+
+my $user = shift(@ARGV) or die "Usage: $0 username";
+
+do {
+    print `usermod -u $uid $user`;
+    $uid++;
+    $exit_status = $?;
+} while ( $exit_status == $exit_status_uid_already_exists && $uid <= $end_uid );
+
+if ( $exit_status == $exit_status_not_root ) {print "Could not set uid, are you root?\n";}
+elsif ( $exit_status != 0 ) {print "Unknown error\n";}
+exit $exit_status;
