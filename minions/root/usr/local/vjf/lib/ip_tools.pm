@@ -2,40 +2,57 @@
 
 # Author: Dominik Danter
 #
-# Purpose: Executes all files in folder "./foo.d", where foo is the name
-#          of the file executing execute_d();
+# Purpose: Set of useful ip tools
 
 package ip_tools;
 
 use warnings;
 use strict;
 
-my $VERSION    = 0.01;
-my @ISA        = qw(Exporter);
-my @EXPORT     = ();
-my @EXPORT_OK  = qw(get_ip_adresses cidr_to_netmask is_in_same_subnet);
+use vars qw($VERSION @ISA @EXPORT @EXPORT_OK );
+
+$VERSION    = 0.01;
+@ISA        = qw(Exporter);
+@EXPORT     = ();
+@EXPORT_OK  = qw(get_ip_addresses cidr_to_netmask is_in_same_subnet octet_to_int);
 
 sub get_ip_addresses {
     my ($network, $cidr) = @_;
     my (%address) = (`ip addr show` =~ /inet\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/(\d\d?)/g );
     if ( defined $network && defined $cidr) {
-        my @address_in_subnet = grep { is_in_same_subnet($network, $_, $cidr) } keys %address;
-        %address = @address{@address_in_subnet};
+        my @address_in_subnet = grep { &is_in_same_subnet(&octet_to_int($network), &octet_to_int($_), $cidr) } keys %address;
+        %address = map {$_ => $address{$_} } @address_in_subnet;
     }    
-    return ${%address};
+    return \%address;
 }
+
+
+#sub get_own_dns_name {
+#my (@address) = @_;
+#@address = &get_ip_adresses unless @address;
+#my %names;
+#foreach (@address) {
+#}
+#}
 
 sub cidr_to_netmask {
     my $cidr = shift;
     my $netmask = ~0;
-    $netmask = $netmask << ($cidr);
+    $netmask =  $netmask << ($cidr);
     $netmask = ~$netmask;
-    $netmask = $netmask << (32  - $cidr);
+    $netmask =  $netmask << (32 - $cidr);
     return $netmask;
 }
 
-sub oz_is_in_same_subnet {
+sub octet_to_int {
+    my $string = shift or die "no argument (ip adress octet string rep) provided";
+    my (@octet) = ( $string =~ /(\d{1,3})/g );
+    if ( scalar @octet != 4 ) {die "Screw you, this ($string) is no ip address string (x.x.x.x)"};
+    return $octet[0] * 256 ** 3 + $octet[1] * 256 ** 2 + $octet[2] * 256 ** 1 + $octet[1];
+}
+
+sub is_in_same_subnet {
     my ($addr1, $addr2, $cidr) = @_;
-    return ~(($addr1 ^ $addr2) & &cidr_to_netmask($cidr));
+    return !(($addr1 ^ $addr2) & &cidr_to_netmask($cidr));
 }
 1;
