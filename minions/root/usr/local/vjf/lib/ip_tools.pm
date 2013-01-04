@@ -10,10 +10,10 @@ package ip_tools;
 use warnings;
 use strict;
 
-$VERSION    = 0.01;
-@ISA        = qw(Exporter);
-@EXPORT     = ();
-@EXPORT_OK  = qw();
+my $VERSION    = 0.01;
+my @ISA        = qw(Exporter);
+my @EXPORT     = ();
+my @EXPORT_OK  = qw(get_ip_adresses cidr_to_netmask is_in_same_subnet);
 
 sub get_ip_addresses {
     my ($network, $cidr) = @_;
@@ -34,7 +34,8 @@ sub cidr_to_netmask {
     return $netmask;
 }
 
-sub is in_same_subnet {
+sub oz_is_in_same_subnet {
     my ($addr1, $addr2, $cidr) = @_;
     return ~(($addr1 ^ $addr2) & &cidr_to_netmask($cidr));
 }
+1;
