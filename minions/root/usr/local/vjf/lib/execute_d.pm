@@ -2,8 +2,9 @@
 
 # Author: Dominik Danter
 #
-# Purpose: Executes all files in folder "./foo.d", where foo is the name
-#          of the file executing execute_d();
+# Purpose: Executes all files in folder "./foo.d", where foo is the
+#          name passed, or if none was passed the name of the file
+#          executing execute_d();
 
 package execute_d;
 
@@ -30,7 +31,8 @@ print "debug on! \n" if $debug;
 print "name of script: \t" .  $0 . "\n" if $debug;
 
 sub execute_d() {
-    my $script_name = $0;
+    my $script_name = shift;
+    if (! defined $script_name ) script_name = $0;
     my $scripts_directory = abs_path($script_name) . ".d";
     my @scripts = <$scripts_directory/*>;
     print "scripts directory:\t" . $scripts_directory . "\n" if $debug;
