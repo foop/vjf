@@ -7,6 +7,13 @@ my $passwd_file = "./default_passwd";
 my $fallback_passwd = "admin";
 my $ip_addr = shift(@ARGV) || "192.168.1.1";
 
+my $die_passwd_file = <<END;
+    Although you provided the file $passwd_file I could not parse it.
+    You're password file's first line should be:
+    password=yourpassword
+    Hint: No whitespace allowed
+END
+
 #set password
 my $passwd = shift(@ARGV);
 unless ( defined $passwd ) {
@@ -14,10 +21,7 @@ unless ( defined $passwd ) {
         open (my $fh,  '<', $passwd_file) or die "Weird, could not read $passwd_file";
         ($passwd) = <$fh> =~ /password=([\S]+)/;
         close $fh;
-        unless (defined $passwd) die "Although you provided the file $passwd_file, I could not parse it. 
-              You're password file's first line should be:
-              password=yourpassword
-              *No whitespace allowed!*";
+        unless (defined $passwd) {die $die_passwd_file};
     }
 }
 $passwd = $fallback_passwd unless defined $passwd;

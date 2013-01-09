@@ -1,0 +1,136 @@
+use strict;
+use warnings;
+use Data::Dumper;
+use Rex::Commands::Iptables;
+use Rex::Commands::Network;
+use Rex::Commands::File;
+use List::Pairwise qw(mapp);
+use Rex::Logger
+
+user "root";
+password "admin";
+pass_auth;
+
+group new_router => "192.168.1.1";
+
+desc "Get the uptime";
+task "uptime", group => "new_router", sub {
+    say run "uptime";
+};
+
+desc "reset to factory defaults";
+task "reset-to-factory", group => "new_router", sub {
+    say run "firstboot";
+};
+
+desc "reboot router";
+task "reboot", group => "new_router", sub {
+    say run "reboot";
+};
+
+desc "vpn - install vpn client";
+task "install-vpn-client",group => "new_router",sub {
+    say run "opkg update";
+    say run "opkg install openvpn luci-app-openvpn";
+};
+
+desc "vpn - install certificates";
+task "vpn-deploy-all-certificates", group => "new_router", sub {
+    my $args = shift;
+    my $ca_cert = $args->{cacert} or die "you need to provide a ca certificate --cacert=cacert.pem";
+    my $server_cert = $args->{servercert} or die "you need to provide a server certificate --servercert=server.crt";
+    my $server_key = $args->{serverkey} or die "you neet to provide a server key --serverkey=server.key";
+};
+
+desc "auth - enable public key";
+task "auth-enable-public-key", group => "new_router", sub {
+    my $args = shift;
+    my $pubkey = $args->{pubkey} || $ENV{"HOME"} . "/.ssh/id_rsa.pub";
+    Rex::Logger::info("Using pubkey: $pubkey");
+    file "/etc/dropbear/authorized_keys",
+         source => $pubkey;
+#owner  =>  "root",
+#group  =>  "root",
+#mode   =>  "644",
+#         on_change => sub { say run "/etc/init.d/dropbear restart"; };
+};
+
+desc "vpn - install ca certificate";
+task "vpn-deploy-cacert", group => "new_router", sub {
+    my $args = shift;
+    my $ca_cert = $args->{cacert} or die "you need to provide a ca certificate --cacert=cacert.pem";
+    
+    file "/etc/openvpn/cacert.pem",
+        owner   =>  "root",
+        group   =>  "root",
+        mode    =>  "644",
+        on_change => sub { say "/etc/openvpn/cacert.pem updated, restarting openVPN server ... "; 
+                          die "It seems openVPN is not installed" unless ( -e "/etc/init.d/openvpn" );
+                          say run "/etc/init.d/openvpn restart";
+                        };
+};
+
+
+desc "misc - set hostname";
+task "set-host-name",group => "new_router", sub {
+    my $args = shift;
+    my @checked_args = keys %$args;
+    die "we need an hostname as an argument" unless @checked_args == 1;
+    my $hostname = $checked_args[0];
+    Rex::Logger::info("Received Hostname $hostname");
+    say run "uci set system.\@system[0].hostname=$hostname";
+    say run "uci commit";
+    my $new_hostname = run "uci get system.\@system[0].hostname";
+    Rex::Logger::info("Hostname set to $new_hostname");
+};
+
+desc "misc - get hostname";
+task "get-host-name",group => "new_router", sub {
+    say run "uci get system.\@system[0].hostname";
+};
+
+
+desc "network - inet address";
+task "network-ic", group => "new_router", sub {
+    say run "ifconfig | grep inet";
+};
+
+desc "reboot";
+task "reboot", group => "new_router", sub {
+    say run "reboot";
+    say "Rebooting as requested, this may take a while...";
+};
+
+desc "firewall - list all rules";
+task "firewall-list-all",group => "new_router", sub {
+    # on openwrt routers there is no /sbin/iptables-save
+    run "[ ! -f /sbin/iptables-save ] && [ -f /usr/sbin/iptables-save ] && 
+           ln -s /usr/sbin/iptables-save /sbin/iptables-save";
+    # print Dumper iptables_list;
+    # iptables t => "nat", A => "POSTROUTING", o => "eth0", j => "MASQUERADE";
+    # todo work o not ?
+    my $firewall = iptables_list();
+    foreach my $table ( keys %{$firewall} ) {
+            say"\n#################### $table ##############################\n";
+        foreach my $rule_bla ($firewall->{$table}) {                                                                                                             
+            foreach my $rule (@$rule_bla) {
+                print "iptables 't' => '$table'";
+                my %value = (@$rule);
+                mapp {print ",\n\t '$a' => '$b'"} @$rule;
+                say "\n;";
+            }
+        }
+    }
+};
+
+desc "firewall - set to vjf default";
+task "firewall-reset" ,group => "new_router", sub {
+    # on openwrt routers there is no /sbin/iptables 
+    run "[ ! -f /bin/iptables ] && [ -f /usr/sbin/iptables ] &&
+         ln -s /usr/sbin/iptables /sbin/iptables";
+
+    iptables_clear;
+    require 'default_firewall.pl';
+    set_default_firewall();
+};
+
