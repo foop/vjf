@@ -9,4 +9,4 @@ use warnings;
 use lib '/usr/local/vjf/lib';
 
 use execute_d qw(&execute_d); 
-&execute_d();
+&execute_d('/usr/local/vjf/vjf-update');
