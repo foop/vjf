@@ -32,7 +32,7 @@ print "name of script: \t" .  $0 . "\n" if $debug;
 
 sub execute_d() {
     my $script_name = shift;
-    if (! defined $script_name ) script_name = $0;
+    if (! defined $script_name ) $script_name = $0;
     my $scripts_directory = abs_path($script_name) . ".d";
     my @scripts = <$scripts_directory/*>;
     print "scripts directory:\t" . $scripts_directory . "\n" if $debug;
