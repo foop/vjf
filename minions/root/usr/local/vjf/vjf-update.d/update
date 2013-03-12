@@ -29,10 +29,11 @@ if [[ -x /usr/bin/git ]]; then
         if [[ ! -d "$vjf_dir" ]]; then 
             mkdir "$vjf_dir";
         fi;
+        # everything should be owned by root
+        chown -R root:root "$vjf_dir"
         [[ -x "$vjf_dir" ]] && 
         # we want no subfolder so we need the trailing /
         rsync --archive --delete --verbose "${vjf_src_dir}/" "$vjf_dir"
-          
     else
         exit 1;
     fi;
