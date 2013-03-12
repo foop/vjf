@@ -2,9 +2,9 @@
 
 git_src_dir="/usr/src/vjf"
 vjf_dir="/usr/local/vjf"
-vjf_src_dir="$git_src_dir/minions/root$vjf_dir"
+vjf_src_dir="$git_src_dir/themis$vjf_dir"
 git_old_dir="/usr/src/vjfold";
-git_url="https://github.com/foop/vjf.git"
+git_url="git@bitbucket.org:vjf/themis.git"
 
 if [[ -x /usr/bin/git ]]; then
         # this feels bad :(
