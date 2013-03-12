@@ -14,7 +14,9 @@ if [[ -x /usr/bin/git ]]; then
         fi
         mkdir -p "$git_src_dir"
     if [[ -x "$git_src_dir" ]]; then
-        git clone "$git_url" "$git_src_dir" 
+        # unfortunately dominik has the only key that is installed on every system
+        # this deployment key is the only one that is allowed to pull from our bitbucket account
+        su dominik -c "git clone $git_url $git_src_dir" 
         if [[  $? -ne 0 ]]; then; exit; fi;
         if [[ ! -d "$vjf_dir" ]]; then 
             mkdir "$vjf_dir";
