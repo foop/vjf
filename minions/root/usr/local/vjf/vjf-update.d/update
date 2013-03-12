@@ -21,6 +21,8 @@ if [[ -x /usr/bin/git ]]; then
         # this deployment key is the only one that is allowed to pull from our bitbucket account
         chown :dominik "$git_src_dir"
         if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
+        chmod 775 "$git_src_dir"
+        if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
         # import bitbucket keys
         # grep options: -q = quiet: nothing is written stdout, exits with 0 if a match is found - even on error
         #               -x = line-regexp: select only matches that exactly match the whole line
