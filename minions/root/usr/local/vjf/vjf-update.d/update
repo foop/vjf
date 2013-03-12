@@ -2,7 +2,7 @@
 
 git_src_dir="/usr/src/vjf"
 vjf_dir="/usr/local/vjf"
-vjf_src_dir="$git_src_dir/themis$vjf_dir"
+vjf_src_dir="${git_src_dir}${vjf_dir}"
 git_old_dir="/usr/src/vjfold";
 git_url="git@bitbucket.org:vjf/themis.git"
 ERROR_FILE_PERMS=16
