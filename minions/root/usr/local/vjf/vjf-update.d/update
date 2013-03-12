@@ -22,7 +22,9 @@ if [[ -x /usr/bin/git ]]; then
         chown :dominik "$git_src_dir"
         if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
         # import bitbucket keys
-        if grep -Fqx "luP3aTsKaVWca8hpJIQTvKR5kJw=|Rr+QL8s+pxHkvHuB90ERfYZ6BsE=" "$known_hosts"; then
+        # grep options: -q = quiet: nothing is written stdout, exist with 0 if a match is found - even on error
+        #               -x = line-regexp: select only matches that exactly match the whole line
+        if grep -qx "luP3aTsKaVWca8hpJIQTvKR5kJw=|Rr+QL8s+pxHkvHuB90ERfYZ6BsE=" "$known_hosts"; then
         else
            echo "|1|luP3aTsKaVWca8hpJIQTvKR5kJw=|Rr+QL8s+pxHkvHuB90ERfYZ6BsE= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
 " >> "$known_hosts"
