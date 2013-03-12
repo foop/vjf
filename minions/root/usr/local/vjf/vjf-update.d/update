@@ -20,6 +20,7 @@ if [[ -x /usr/bin/git ]]; then
         # unfortunately dominik has the only key that is installed on every system
         # this deployment key is the only one that is allowed to pull from our bitbucket account
         chown :dominik "$git_src_dir"
+        if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
         # import bitbucket keys
         if grep -Fqx "luP3aTsKaVWca8hpJIQTvKR5kJw=|Rr+QL8s+pxHkvHuB90ERfYZ6BsE=" "$known_hosts"; then
         else
@@ -31,7 +32,6 @@ if [[ -x /usr/bin/git ]]; then
             echo "|1|jU97LLcmvRgHYp5yvN3FUgWYjvY=|XvCssgWZHAZHy/n2MDFfKv4gbZM= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
 " >> "$known_hosts"
         fi
-        if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
         su dominik -c "git clone $git_url $git_src_dir" 
         if [[ $? -ne 0 ]]; then; exit "$ERROR_GIT_CLONE"; fi;
         if [[ ! -d "$vjf_dir" ]]; then 
