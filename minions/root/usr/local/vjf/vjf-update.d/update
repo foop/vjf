@@ -4,23 +4,24 @@ git_src_dir="/usr/src/vjf"
 vjf_dir="/usr/local/vjf"
 vjf_src_dir="$git_src_dir/minions/root$vjf_dir"
 git_old_dir="/usr/src/vjfold";
+git_url="https://github.com/foop/vjf.git"
 
 if [[ -x /usr/bin/git ]]; then
         # this feels bad :(
-        if [[ -d $git_src_dir ]]; then
-            rm -r $git_old_dir;
-            mv $git_src_dir $git_old_dir;
+        if [[ -d "$git_src_dir" ]]; then
+            rm -r "$git_old_dir"
+            mv "$git_src_dir" "$git_old_dir"
         fi
-        mkdir -p $git_src_dir;
-    if [[ -x $git_src_dir ]]; then
-        git clone https://github.com/foop/vjf.git $git_src_dir 
+        mkdir -p "$git_src_dir"
+    if [[ -x "$git_src_dir" ]]; then
+        git clone "$git_url" "$git_src_dir" 
         if [[  $? -ne 0 ]]; then; exit; fi;
-        if [[ ! -d $vjf_dir ]]; then 
-            mkdir $vjf_dir;
+        if [[ ! -d "$vjf_dir" ]]; then 
+            mkdir "$vjf_dir";
         fi;
-        [[ -x $vjf_dir ]] && 
+        [[ -x "$vjf_dir" ]] && 
         # we want no subfolder so we need the trailing /
-        rsync --archive --delete --verbose $vjf_src_dir/ $vjf_dir
+        rsync --archive --delete --verbose "${vjf_src_dir}/" "$vjf_dir"
           
     else
         exit 1;
