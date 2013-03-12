@@ -22,7 +22,7 @@ if [[ -x /usr/bin/git ]]; then
         chown :dominik "$git_src_dir"
         if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
         # import bitbucket keys
-        # grep options: -q = quiet: nothing is written stdout, exist with 0 if a match is found - even on error
+        # grep options: -q = quiet: nothing is written stdout, exits with 0 if a match is found - even on error
         #               -x = line-regexp: select only matches that exactly match the whole line
         if grep -qx "luP3aTsKaVWca8hpJIQTvKR5kJw=|Rr+QL8s+pxHkvHuB90ERfYZ6BsE=" "$known_hosts"; then
         else
