@@ -5,6 +5,8 @@ vjf_dir="/usr/local/vjf"
 vjf_src_dir="$git_src_dir/themis$vjf_dir"
 git_old_dir="/usr/src/vjfold";
 git_url="git@bitbucket.org:vjf/themis.git"
+ERROR_FILE_PERMS=16
+ERROR_GIT_CLONE=32
 
 if [[ -x /usr/bin/git ]]; then
         # this feels bad :(
@@ -16,8 +18,10 @@ if [[ -x /usr/bin/git ]]; then
     if [[ -x "$git_src_dir" ]]; then
         # unfortunately dominik has the only key that is installed on every system
         # this deployment key is the only one that is allowed to pull from our bitbucket account
+        chown :dominik "$git_src_dir"
+        if [[ $? -ne 0 ]]; then; exit "$ERROR_FILE_PERMS"; fi
         su dominik -c "git clone $git_url $git_src_dir" 
-        if [[  $? -ne 0 ]]; then; exit; fi;
+        if [[ $? -ne 0 ]]; then; exit "$ERROR_GIT_CLONE"; fi;
         if [[ ! -d "$vjf_dir" ]]; then 
             mkdir "$vjf_dir";
         fi;
